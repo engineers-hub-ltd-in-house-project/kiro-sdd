@@ -1,0 +1,52 @@
+{
+  "feature_name": "health-check",
+  "project_description": "Simple health check endpoint that returns system status and database connectivity",
+  "created_at": "2025-01-15T12:30:00Z",
+  "updated_at": "2025-01-15T12:30:00Z",
+  "language": "en",
+  "phase": "sequence-defined",
+  "data_elements_identified": true,
+  "use_cases_count": 3,
+  "sequences_count": 3,
+  "error_flows_defined": true,
+  "approvals": {
+    "requirements": {
+      "generated": true,
+      "approved": true
+    },
+    "usecase": {
+      "generated": true,
+      "approved": true
+    },
+    "sequence": {
+      "generated": true,
+      "approved": false
+    },
+    "schema": {
+      "generated": false,
+      "approved": false
+    },
+    "api": {
+      "generated": false,
+      "approved": false
+    },
+    "interfaces": {
+      "generated": false,
+      "approved": false
+    },
+    "design": {
+      "generated": false,
+      "approved": false
+    },
+    "tests": {
+      "generated": false,
+      "approved": false,
+      "phase": "red"
+    },
+    "tasks": {
+      "generated": false,
+      "approved": false
+    }
+  },
+  "ready_for_implementation": false
+}
