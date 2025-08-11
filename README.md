@@ -185,9 +185,11 @@ MIT License - See [LICENSE](LICENSE) file for details.
 
 ## Acknowledgments
 
+- Based on [claude-code-spec](https://github.com/gotalab/claude-code-spec) - the original specification-driven development framework
 - Inspired by Kiro's specification-driven development methodology
 - Built for Claude Code and AI-assisted development workflows
 - Designed to solve real-world AI development integration failures
+- Special thanks to the claude-code-spec team for providing the foundation for this enhanced framework
 
 ---
 
