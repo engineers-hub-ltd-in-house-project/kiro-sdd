@@ -1,72 +1,94 @@
 # Kiro-SDD: Specification-Driven Development Framework
 
-> A comprehensive specification-driven development framework inspired by Kiro methodology, designed to prevent the common "70% rewrite" problem in AI-assisted development.
+A comprehensive specification-driven development framework that prevents integration failures between frontend and backend in AI-assisted development.
 
-## 🎯 Problem Statement
+## Problem Statement
 
-In AI-assisted development, approximately 70% of database queries need to be rewritten during frontend-backend integration. This occurs because:
-- Design phases attempt to handle DB schema, API, and UI simultaneously
-- Lack of clear specification boundaries between phases
-- AI makes self-judgments without proper specification references
-- Missing approval gates between critical development phases
+In AI-assisted development with frontend-backend separation architecture, critical integration failures occur:
+- Frontend sends parameters not defined in API specifications
+- Backend expects data structures that frontend never implements
+- Database schemas don't match API contracts
+- Type definitions diverge between layers
+- AI generates incompatible code for each layer independently
 
-## 💡 Solution
+These issues stem from AI making isolated decisions without enforcing contracts between system layers.
 
-Kiro-SDD enforces a strict specification-driven workflow with:
-- **Discrete phases** with mandatory approvals
-- **Specification references** in every implementation task
-- **Interactive approval prompts** between phases
-- **Clear separation** of concerns (data → API → UI)
+## Solution
 
-## 🚀 Quick Start
+Kiro-SDD enforces strict contract-driven development through sequential specification phases:
+
+1. **Schema First**: Define database structure
+2. **API Specification**: Define exact contracts based on schema
+3. **Interface Definitions**: Create shared type definitions
+4. **Test Specifications**: Define validation before implementation
+5. **Implementation with References**: Every task must reference specifications
+
+This prevents AI from creating incompatible code by requiring specification references for every implementation decision.
+
+## Quick Start
 
 ### Installation
 
-1. Copy the `commands/kiro/` directory to your project's `.claude/commands/` directory
-2. Initialize your first specification:
+1. Copy the `.claude/commands/kiro/` directory to your project's `.claude/commands/` directory
+2. Copy `.kiro/steering/` templates to your project (optional but recommended)
+3. Initialize steering documents:
+```bash
+/kiro:steering
+```
+4. Initialize your first specification:
 ```bash
 /kiro:spec-init "Your feature description here"
 ```
 
-### Basic Workflow
+### Complete Workflow
 
 ```mermaid
 graph LR
-    A[Requirements] -->|Approve| B[Use Cases]
-    B -->|Approve| C[Sequence]
-    C -->|Approve| D[Schema]
-    D -->|Approve| E[API]
-    E -->|Approve| F[Interfaces]
-    F -->|Approve| G[Tests]
-    G -->|Approve| H[Design]
-    H -->|Approve| I[Tasks]
-    I -->|Ready| J[Implementation]
+    S[Steering] -->|Optional| R[Requirements]
+    R -->|Approve| U[Use Cases]
+    U -->|Approve| Seq[Sequence]
+    Seq -->|Approve| Sch[Schema]
+    Sch -->|Approve| A[API]
+    A -->|Approve| I[Interfaces]
+    I -->|Approve| T[Tests]
+    T -->|Approve| D[Design]
+    D -->|Approve| Tasks[Tasks]
+    Tasks -->|Ready| Impl[Implementation]
 ```
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 your-project/
 ├── .claude/
 │   └── commands/
-│       └── kiro/           # Copy commands here
-└── .kiro/
-    └── specs/
-        └── your-feature/
-            ├── README.md           # Feature overview
-            ├── spec.json          # Metadata & approvals
-            ├── requirements.md    # Business requirements
-            ├── usecase.md        # Use cases & data
-            ├── sequence.md       # Sequence diagrams
-            ├── schema.md         # Database design
-            ├── api.md           # API specification
-            ├── interfaces.md    # Type definitions
-            ├── tests-red.md     # Test specifications
-            ├── design.md        # Technical design
-            └── tasks.md         # Implementation tasks
+│       └── kiro/           # Kiro commands
+├── .kiro/
+│   ├── steering/           # Project context
+│   │   ├── product.md     # Product overview
+│   │   ├── tech.md        # Technical stack
+│   │   └── structure.md   # Code organization
+│   └── specs/
+│       └── your-feature/
+│           ├── README.md           # Feature overview
+│           ├── spec.json          # Metadata & approvals
+│           ├── requirements.md    # Business requirements
+│           ├── usecase.md        # Use cases & data
+│           ├── sequence.md       # Sequence diagrams
+│           ├── schema.md         # Database design
+│           ├── api.md           # API specification
+│           ├── interfaces.md    # Type definitions
+│           ├── tests-red.md     # Test specifications
+│           ├── design.md        # Technical design
+│           └── tasks.md         # Implementation tasks
+└── CLAUDE.md              # Project instructions
 ```
 
-## 🔧 Available Commands
+## Available Commands
+
+### Steering Commands (Optional but Recommended)
+- `/kiro:steering` - Create/update core steering documents
+- `/kiro:steering-custom` - Create custom steering for specialized contexts
 
 ### Core Specification Commands
 - `/kiro:spec-init [description]` - Initialize new specification
@@ -84,63 +106,89 @@ your-project/
 - `/kiro:spec-status [feature]` - Check specification progress
 - `/kiro:spec-validate [feature]` - Validate task references
 
-## ✨ Key Features
+### TDD Commands
+- `/kiro:implement-green [feature]` - Implement to pass tests
+- `/kiro:refactor [feature]` - Refactor while keeping tests green
 
-### 1. Phased Development
+## Key Features
+
+### 1. Contract Enforcement
+Every layer must respect defined contracts:
+- Database schema defines data structure
+- API specification defines exact parameters and responses
+- Interface definitions ensure type safety across layers
+- No implementation without specification reference
+
+### 2. Phased Development
 Each phase must be approved before proceeding:
 - Requirements → Use Cases → Sequences → Schema → API → Interfaces → Tests → Design → Tasks
 
-### 2. Interactive Approvals
+### 3. Interactive Approvals
 ```bash
 # When running /kiro:spec-design
 > "Have you reviewed requirements.md? [y/N]"
 # Answering 'y' automatically updates approval status
 ```
 
-### 3. Specification References
+### 4. Specification References
 Every implementation task MUST reference relevant specifications:
 ```markdown
-- [ ] Implement health endpoint
-  - Reference: api.md#get-health
-  - Reference: interfaces.md#HealthResponse
+- [ ] Implement user endpoint
+  - Reference: api.md#post-users
+  - Reference: interfaces.md#UserRequest
+  - Reference: schema.md#users-table
 ```
 
-### 4. Automatic Validation
+### 5. Automatic Validation
 The `/kiro:spec-validate` command ensures:
 - All tasks have specification references
 - No orphaned specifications
 - Complete coverage of requirements
+- Contract consistency between layers
 
-## 📚 Documentation
+## Why This Matters
+
+Without Kiro-SDD, AI independently generates:
+- Frontend code that sends `userId` 
+- Backend expecting `user_id`
+- Database with column `user_identifier`
+
+With Kiro-SDD:
+- Schema defines: `user_id UUID`
+- API specifies: `user_id: string (UUID format)`
+- Interface defines: `userId: string // maps to user_id`
+- Implementation references these specifications
+
+## Documentation
 
 - [Getting Started Guide](docs/getting-started.md)
 - [Methodology Overview](docs/methodology.md)
-- [Example: Health Check](examples/health-check/)
+- [Example: Health Check](.kiro/specs/health-check/)
 
-## 🎓 Philosophy
+## Philosophy
 
 Kiro-SDD follows these principles:
 
-1. **Specification First**: No code without specification
+1. **Contract First**: Define contracts before code
 2. **Approval Gates**: Human review at each phase
 3. **Reference Mandatory**: Every task links to specs
-4. **English Generation**: Consistent technical documentation
+4. **Type Safety**: Enforce type consistency across layers
 5. **Incremental Progress**: Small, validated steps
 
-## 🤝 Contributing
+## Contributing
 
 This framework is based on the Kiro methodology for specification-driven development. Contributions that align with the core philosophy are welcome.
 
-## 📄 License
+## License
 
 MIT License - See [LICENSE](LICENSE) file for details.
 
-## 🙏 Acknowledgments
+## Acknowledgments
 
 - Inspired by Kiro's specification-driven development methodology
 - Built for Claude Code and AI-assisted development workflows
-- Designed to solve real-world AI development challenges
+- Designed to solve real-world AI development integration failures
 
 ---
 
-**Remember**: The goal is to prevent the "70% rewrite" problem by ensuring every piece of code has a clear specification and approval before implementation begins.
+**Remember**: The goal is to prevent integration failures by ensuring every layer respects the contracts defined in specifications.
