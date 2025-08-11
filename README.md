@@ -18,7 +18,7 @@ These issues stem from AI making isolated decisions without enforcing contracts 
 Kiro-SDD enforces strict contract-driven development through sequential specification phases:
 
 1. **Schema First**: Define database structure
-2. **API Specification**: Define exact contracts based on schema
+2. **API Specification**: Define exact contracts based on schema (REST/gRPC/GraphQL)
 3. **Interface Definitions**: Create shared type definitions
 4. **Test Specifications**: Define validation before implementation
 5. **Implementation with References**: Every task must reference specifications
@@ -76,7 +76,7 @@ your-project/
 │           ├── usecase.md        # Use cases & data
 │           ├── sequence.md       # Sequence diagrams
 │           ├── schema.md         # Database design
-│           ├── api.md           # API specification
+│           ├── api.md           # API specification (REST/gRPC/GraphQL)
 │           ├── interfaces.md    # Type definitions
 │           ├── tests-red.md     # Test specifications
 │           ├── design.md        # Technical design
@@ -96,7 +96,7 @@ your-project/
 - `/kiro:spec-usecase [feature]` - Define use cases
 - `/kiro:spec-sequence [feature]` - Create sequence diagrams
 - `/kiro:spec-schema [feature]` - Design database schema
-- `/kiro:spec-api [feature]` - Define API contracts
+- `/kiro:spec-api [feature] [--type rest|grpc|graphql]` - Define API contracts (REST/gRPC/GraphQL)
 - `/kiro:spec-interfaces [feature]` - Create type definitions
 - `/kiro:spec-tests-red [feature]` - Write test specifications
 - `/kiro:spec-design [feature]` - Create technical design

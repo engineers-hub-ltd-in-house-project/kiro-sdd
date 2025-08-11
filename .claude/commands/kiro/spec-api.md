@@ -1,11 +1,25 @@
 ---
-description: Design REST API specifications with OpenAPI format
+description: Design API specifications (REST/gRPC/GraphQL) with appropriate format
 allowed-tools: Bash, Read, Write, Edit, MultiEdit, Update
 ---
 
 # API Specification Design
 
-Design comprehensive REST API for feature: **$ARGUMENTS**
+## Parse Arguments and Determine API Type
+
+Feature and API type from arguments: **$ARGUMENTS**
+
+**Expected formats:**
+- `feature-name` (defaults to REST)
+- `feature-name --type rest`
+- `feature-name --type grpc`
+- `feature-name --type graphql`
+
+**Instructions:**
+1. Parse $ARGUMENTS to extract feature name and API type
+2. If `--type` flag is present, use the specified type (rest/grpc/graphql)
+3. If no `--type` flag, default to REST
+4. Generate appropriate API specification based on the selected type
 
 ## Context Validation
 
@@ -22,10 +36,12 @@ Design comprehensive REST API for feature: **$ARGUMENTS**
 
 Before generating API spec, ask the user:
 ```
-Ready to generate API specification for $ARGUMENTS?
+Ready to generate [API_TYPE] API specification for [FEATURE_NAME]?
 Database schema should be reviewed first.
 Have you reviewed schema.md? [y/N]: 
 ```
+
+**Note:** Replace [API_TYPE] with the detected type and [FEATURE_NAME] with the extracted feature name.
 
 If 'N': Stop and request review of schema first.
 If 'y': Update spec.json to mark schema as approved and proceed:
@@ -42,9 +58,13 @@ If 'y': Update spec.json to mark schema as approved and proceed:
 
 ## Task: Generate API Specification
 
+Based on the detected API type, generate the appropriate specification:
+
+### For REST API (default or --type rest)
+
 Generate api.md with complete OpenAPI 3.0 specification:
 
-### 1. API Document Structure
+#### 1. REST API Document Structure
 
 ```markdown
 # API Specification: [Feature Name]
@@ -628,6 +648,373 @@ Update spec.json:
 
 Generate a complete API specification that **prevents integration issues** by defining exact contracts upfront.
 
+### For gRPC API (--type grpc)
+
+Generate api.md with Protocol Buffers specification:
+
+#### 1. gRPC API Document Structure
+
+```markdown
+# gRPC API Specification: [Feature Name]
+
+## Overview
+gRPC service design based on sequence diagrams and database schema.
+
+## Service Definition
+
+### Proto File: [feature_name].proto
+
+```protobuf
+syntax = "proto3";
+
+package [feature].v1;
+
+import "google/api/annotations.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/empty.proto";
+import "google/protobuf/wrappers.proto";
+
+service [FeatureName]Service {
+  // Service methods based on sequence diagrams
+  rpc GetResource(GetResourceRequest) returns (GetResourceResponse) {
+    option (google.api.http) = {
+      get: "/v1/resources/{id}"
+    };
+  }
+  
+  // Streaming RPC for real-time updates
+  rpc StreamUpdates(StreamRequest) returns (stream UpdateResponse);
+  
+  // Bidirectional streaming
+  rpc Chat(stream ChatMessage) returns (stream ChatMessage);
+}
+```
+
+## Message Definitions
+
+```protobuf
+message GetResourceRequest {
+  string id = 1;
+  bool include_details = 2;
+}
+
+message GetResourceResponse {
+  Resource resource = 1;
+  google.protobuf.Timestamp retrieved_at = 2;
+}
+
+message Resource {
+  string id = 1;
+  string name = 2;
+  Status status = 3;
+  map<string, string> metadata = 4;
+  repeated string tags = 5;
+}
+
+enum Status {
+  STATUS_UNSPECIFIED = 0;
+  STATUS_ACTIVE = 1;
+  STATUS_INACTIVE = 2;
+  STATUS_DELETED = 3;
+}
+```
+
+## Error Handling
+
+```protobuf
+message ErrorDetails {
+  string code = 1;
+  string message = 2;
+  map<string, string> metadata = 3;
+}
+```
+
+## Service Configuration
+
+```yaml
+type: google.api.Service
+config_version: 3
+name: [service].example.com
+
+apis:
+  - name: [feature].v1.[FeatureName]Service
+
+authentication:
+  rules:
+    - selector: "*"
+      requirements:
+        - provider_id: bearer
+
+http:
+  rules:
+    - selector: [feature].v1.[FeatureName]Service.GetResource
+      get: /v1/resources/{id}
+```
+```
+
+### For GraphQL API (--type graphql)
+
+Generate api.md with GraphQL schema:
+
+#### 1. GraphQL API Document Structure
+
+```markdown
+# GraphQL API Specification: [Feature Name]
+
+## Overview
+GraphQL schema design based on sequence diagrams and database schema.
+
+## Schema Definition
+
+### Type System
+
+```graphql
+schema {
+  query: Query
+  mutation: Mutation
+  subscription: Subscription
+}
+
+type Query {
+  # Single resource query
+  resource(id: ID!): Resource
+  
+  # List resources with pagination
+  resources(
+    first: Int
+    after: String
+    last: Int
+    before: String
+    filter: ResourceFilter
+    orderBy: ResourceOrderBy
+  ): ResourceConnection!
+  
+  # Search resources
+  searchResources(
+    query: String!
+    limit: Int = 10
+  ): [Resource!]!
+}
+
+type Mutation {
+  # Create resource
+  createResource(input: CreateResourceInput!): CreateResourcePayload!
+  
+  # Update resource
+  updateResource(id: ID!, input: UpdateResourceInput!): UpdateResourcePayload!
+  
+  # Delete resource
+  deleteResource(id: ID!): DeleteResourcePayload!
+}
+
+type Subscription {
+  # Subscribe to resource changes
+  resourceUpdated(id: ID!): Resource!
+  
+  # Subscribe to all changes
+  allResourcesUpdated(filter: ResourceFilter): Resource!
+}
+```
+
+## Object Types
+
+```graphql
+type Resource {
+  id: ID!
+  name: String!
+  description: String
+  status: ResourceStatus!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  createdBy: User!
+  metadata: JSON
+  tags: [String!]!
+}
+
+type User {
+  id: ID!
+  email: String!
+  name: String!
+  resources: [Resource!]!
+}
+
+enum ResourceStatus {
+  DRAFT
+  ACTIVE
+  ARCHIVED
+  DELETED
+}
+```
+
+## Input Types
+
+```graphql
+input CreateResourceInput {
+  name: String!
+  description: String
+  status: ResourceStatus = DRAFT
+  metadata: JSON
+  tags: [String!]
+}
+
+input UpdateResourceInput {
+  name: String
+  description: String
+  status: ResourceStatus
+  metadata: JSON
+  tags: [String!]
+}
+
+input ResourceFilter {
+  status: ResourceStatus
+  createdAfter: DateTime
+  createdBefore: DateTime
+  tags: [String!]
+  search: String
+}
+
+input ResourceOrderBy {
+  field: ResourceOrderField!
+  direction: OrderDirection!
+}
+
+enum ResourceOrderField {
+  NAME
+  CREATED_AT
+  UPDATED_AT
+  STATUS
+}
+
+enum OrderDirection {
+  ASC
+  DESC
+}
+```
+
+## Pagination
+
+```graphql
+type ResourceConnection {
+  edges: [ResourceEdge!]!
+  pageInfo: PageInfo!
+  totalCount: Int!
+}
+
+type ResourceEdge {
+  cursor: String!
+  node: Resource!
+}
+
+type PageInfo {
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+  startCursor: String
+  endCursor: String
+}
+```
+
+## Payloads
+
+```graphql
+type CreateResourcePayload {
+  resource: Resource
+  userErrors: [UserError!]!
+}
+
+type UpdateResourcePayload {
+  resource: Resource
+  userErrors: [UserError!]!
+}
+
+type DeleteResourcePayload {
+  deletedResourceId: ID
+  userErrors: [UserError!]!
+}
+
+type UserError {
+  field: [String!]
+  message: String!
+  code: String!
+}
+```
+
+## Directives
+
+```graphql
+directive @auth(requires: Role = USER) on FIELD_DEFINITION
+directive @deprecated(reason: String) on FIELD_DEFINITION | ENUM_VALUE
+directive @rateLimit(limit: Int!, window: Int!) on FIELD_DEFINITION
+directive @cache(ttl: Int!) on FIELD_DEFINITION
+
+enum Role {
+  ADMIN
+  USER
+  GUEST
+}
+```
+
+## Custom Scalars
+
+```graphql
+scalar DateTime
+scalar JSON
+scalar URL
+scalar EmailAddress
+```
+```
+
+## Common Elements for All API Types
+
+### Security Considerations
+- Authentication mechanism (JWT, OAuth2, API keys)
+- Authorization rules (RBAC, ABAC)
+- Rate limiting strategies
+- Input validation rules
+- CORS policies (for REST/GraphQL)
+- TLS requirements
+
+### Error Handling
+- Consistent error codes and messages
+- Proper HTTP status codes (REST)
+- gRPC status codes (gRPC)
+- GraphQL error extensions (GraphQL)
+
+### Versioning Strategy
+- URL versioning for REST (/v1/, /v2/)
+- Package versioning for gRPC (v1, v2)
+- Schema evolution for GraphQL
+
+### Documentation Requirements
+- Complete field descriptions
+- Example requests and responses
+- Authentication examples
+- Error scenarios
+- Rate limit information
+
+## Update Metadata
+
+After generating the API specification, update spec.json:
+```json
+{
+  "phase": "api-defined",
+  "api_type": "[rest|grpc|graphql]",
+  "endpoints_count": [number],
+  "approvals": {
+    "schema": {
+      "approved": true
+    },
+    "api": {
+      "generated": true,
+      "approved": false
+    }
+  },
+  "updated_at": "current_timestamp"
+}
+```
+
 ## Output
 
-Write `.kiro/specs/$ARGUMENTS/api.md` with complete OpenAPI specification.
+Write `.kiro/specs/[FEATURE_NAME]/api.md` with the complete API specification based on the selected type:
+- **REST**: OpenAPI 3.0 specification
+- **gRPC**: Protocol Buffers definition with service configuration
+- **GraphQL**: Complete GraphQL schema with types, queries, mutations, and subscriptions

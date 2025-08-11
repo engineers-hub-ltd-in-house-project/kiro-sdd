@@ -16,7 +16,7 @@ In AI-assisted development with frontend-backend separation, critical integratio
 
 Kiro-SDD enforces strict contract-driven development through sequential specification phases:
 1. **Schema First**: Define database structure
-2. **API Specification**: Define exact contracts based on schema
+2. **API Specification**: Define exact contracts based on schema (REST/gRPC/GraphQL)
 3. **Interface Definitions**: Create shared type definitions
 4. **Test Specifications**: Define validation before implementation
 5. **Implementation with References**: Every task must reference specifications
@@ -79,7 +79,7 @@ The workflow enforces contracts between all system layers:
 2. `/kiro:spec-usecase [feature]` - Use cases and data elements
 3. `/kiro:spec-sequence [feature]` - Sequence diagrams showing component interactions
 4. `/kiro:spec-schema [feature]` - **Database contracts** (SQL DDL, migrations)
-5. `/kiro:spec-api [feature]` - **API contracts** (OpenAPI specification)
+5. `/kiro:spec-api [feature] [--type rest|grpc|graphql]` - **API contracts** (OpenAPI/Protocol Buffers/GraphQL)
 6. `/kiro:spec-interfaces [feature]` - **Type contracts** (shared definitions)
 7. `/kiro:spec-tests-red [feature]` - **Test contracts** (validation specs)
 
@@ -121,7 +121,7 @@ Without Kiro-SDD, AI independently generates:
 
 With Kiro-SDD:
 - Schema defines: `user_id UUID`
-- API specifies: `user_id: string (UUID format)`
+- API specifies: `user_id: string (UUID format)` in REST/gRPC/GraphQL
 - Interface defines: `userId: string // maps to user_id`
 - Implementation references these specifications
 
