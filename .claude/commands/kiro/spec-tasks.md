@@ -7,9 +7,6 @@ allowed-tools: Bash, Read, Write, Edit, MultiEdit, Update
 
 Generate detailed implementation tasks for feature: **$ARGUMENTS**
 
-## Language Setting
-**IMPORTANT**: Generate all content in English, not Japanese.
-
 ## Context Validation
 
 ### All Specifications Must Be Available

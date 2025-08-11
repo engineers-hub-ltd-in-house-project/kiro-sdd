@@ -7,9 +7,6 @@ allowed-tools: Bash, Read, Write, Edit, MultiEdit, Update
 
 Create comprehensive sequence diagrams for feature: **$ARGUMENTS**
 
-## Language Setting
-**IMPORTANT**: Generate all content in English, not Japanese.
-
 ## Context Validation
 
 ### Previous Phase Check

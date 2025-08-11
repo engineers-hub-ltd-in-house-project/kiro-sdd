@@ -7,9 +7,6 @@ allowed-tools: Bash, Read, Write, Edit, MultiEdit, Update, WebSearch, WebFetch
 
 Generate comprehensive requirements for feature: **$ARGUMENTS**
 
-## Language Setting
-**IMPORTANT**: Generate all content in English, not Japanese.
-
 ## Context Validation
 
 ### Steering Context

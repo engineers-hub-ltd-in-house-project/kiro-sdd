@@ -27,16 +27,62 @@ detects existing documents and handles them appropriately.
 - Custom files message:
   !`test -d ".kiro/steering" && echo "🔧 Check count above - custom files will be preserved" || echo "📋 Create directory first"`
 
+## Supported Languages and File Types
+
+### Programming Languages
+- **JavaScript/TypeScript**: *.js, *.jsx, *.ts, *.tsx, *.mjs, *.cjs
+- **Python**: *.py, *.pyw, *.pyx, *.pyi
+- **Ruby**: *.rb, *.rake, *.gemspec, Gemfile, Rakefile
+- **PHP**: *.php, *.phtml, *.php3, *.php4, *.php5, *.php7, *.phps
+- **Java**: *.java, *.class, *.jar
+- **C/C++**: *.c, *.cpp, *.cc, *.cxx, *.h, *.hpp, *.hxx
+- **C#**: *.cs, *.csx
+- **Go**: *.go
+- **Rust**: *.rs
+- **Kotlin**: *.kt, *.kts
+- **Swift**: *.swift
+- **Scala**: *.scala, *.sc
+- **Shell**: *.sh, *.bash, *.zsh, *.fish, *.ksh
+- **SQL**: *.sql, *.psql, *.mysql
+- **Dart**: *.dart
+- **Elixir**: *.ex, *.exs
+
+### Frontend Frameworks
+- **Vue**: *.vue
+- **Svelte**: *.svelte
+- **React**: *.jsx, *.tsx (covered above)
+
+### Markup and Style
+- **HTML**: *.html, *.htm, *.xhtml
+- **CSS**: *.css, *.scss, *.sass, *.less, *.styl
+- **XML**: *.xml, *.xsl, *.xslt
+
+### Configuration Files
+- **Package Managers**: package.json, package-lock.json, yarn.lock, pnpm-lock.yaml, composer.json, composer.lock, Gemfile, Gemfile.lock, Cargo.toml, Cargo.lock, go.mod, go.sum, requirements.txt, Pipfile, Pipfile.lock, pyproject.toml, poetry.lock
+- **Build Tools**: Makefile, CMakeLists.txt, build.gradle, build.gradle.kts, pom.xml, webpack.config.js, vite.config.js, rollup.config.js, tsconfig.json, jsconfig.json, babel.config.js, .babelrc
+- **CI/CD**: .gitlab-ci.yml, .travis.yml, azure-pipelines.yml, Jenkinsfile, .circleci/config.yml, .github/workflows/*.yml
+- **Containers**: Dockerfile, docker-compose.yml, docker-compose.yaml, .dockerignore
+- **Environment**: .env, .env.*, .envrc
+- **Linting/Formatting**: .eslintrc*, .prettierrc*, .stylelintrc*, .rubocop.yml, tslint.json, .flake8, .pylintrc
+
+### Database and Migrations
+- **Migration Directories**: migrations/, db/migrate/, database/migrations/
+- **Migration Files**: *.migration.*, *.seed.*, *_migrate.*, *_seed.*
+- **Schema Files**: schema.rb, schema.sql, schema.prisma, structure.sql, database.sql
+- **Seeds**: seeds.rb, seeds.sql, seeders/
+
 ## Project Analysis
 
 ### Current Project State
 
 - Project files:
-  !`find . -path ./node_modules -prune -o -path ./.git -prune -o -path ./dist -prune -o -type f \( -name "*.py" -o -name "*.js" -o -name "*.ts" -o -name "*.jsx" -o -name "*.tsx" -o -name "*.java" -o -name "*.go" -o -name "*.rs" \) -print 2>/dev/null || echo "No source files found"`
+  !`find . -path ./node_modules -prune -o -path ./.git -prune -o -path ./dist -prune -o -path ./vendor -prune -o -path ./.bundle -prune -o -type f \( -name "*.py" -o -name "*.pyw" -o -name "*.js" -o -name "*.mjs" -o -name "*.cjs" -o -name "*.ts" -o -name "*.jsx" -o -name "*.tsx" -o -name "*.java" -o -name "*.go" -o -name "*.rs" -o -name "*.rb" -o -name "*.rake" -o -name "*.php" -o -name "*.phtml" -o -name "*.c" -o -name "*.cpp" -o -name "*.cc" -o -name "*.h" -o -name "*.hpp" -o -name "*.cs" -o -name "*.kt" -o -name "*.kts" -o -name "*.swift" -o -name "*.scala" -o -name "*.sh" -o -name "*.bash" -o -name "*.sql" -o -name "*.vue" -o -name "*.svelte" -o -name "*.dart" -o -name "*.ex" -o -name "*.exs" -o -name "*.html" -o -name "*.css" -o -name "*.scss" -o -name "*.sass" \) -print 2>/dev/null | head -100 | wc -l | xargs -I {} sh -c 'echo "Found {} source files (showing first 100)"'`
+- Migration files:
+  !`find . -path ./node_modules -prune -o -path ./.git -prune -o \( -path "*/migrations/*" -o -path "*/db/migrate/*" -o -path "*/database/migrations/*" -o -name "*.migration.*" -o -name "*_migrate.*" \) -type f -print 2>/dev/null | head -20 | wc -l | xargs -I {} sh -c 'echo "Found {} migration files"'`
 - Configuration files:
-  !`find . -maxdepth 3 \( -name "package.json" -o -name "requirements.txt" -o -name "pom.xml" -o -name "Cargo.toml" -o -name "go.mod" -o -name "pyproject.toml" -o -name "tsconfig.json" \) 2>/dev/null || echo "No config files found"`
+  !`find . -maxdepth 3 \( -name "package.json" -o -name "package-lock.json" -o -name "yarn.lock" -o -name "pnpm-lock.yaml" -o -name "composer.json" -o -name "requirements.txt" -o -name "Pipfile" -o -name "pyproject.toml" -o -name "pom.xml" -o -name "build.gradle" -o -name "Cargo.toml" -o -name "go.mod" -o -name "Gemfile" -o -name "Makefile" -o -name "CMakeLists.txt" -o -name "tsconfig.json" -o -name "webpack.config.js" -o -name "vite.config.js" -o -name "Dockerfile" -o -name "docker-compose.yml" -o -name ".env*" \) 2>/dev/null | head -20 | wc -l | xargs -I {} sh -c 'echo "Found {} configuration files"'`
 - Documentation:
-  !`find . -maxdepth 3 -path ./node_modules -prune -o -path ./.git -prune -o -path ./.kiro -prune -o \( -name "README*" -o -name "CHANGELOG*" -o -name "LICENSE*" -o -name "*.md" \) -print 2>/dev/null || echo "No documentation files found"`
+  !`find . -maxdepth 3 -path ./node_modules -prune -o -path ./.git -prune -o -path ./.kiro -prune -o \( -name "README*" -o -name "CHANGELOG*" -o -name "LICENSE*" -o -name "*.md" \) -print 2>/dev/null | head -20 | wc -l | xargs -I {} sh -c 'echo "Found {} documentation files"'`
 
 ### Recent Changes (if updating)
 

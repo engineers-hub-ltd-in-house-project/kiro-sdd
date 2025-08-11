@@ -7,9 +7,6 @@ allowed-tools: Bash, Read, Write, Edit, MultiEdit, Update
 
 Design comprehensive REST API for feature: **$ARGUMENTS**
 
-## Language Setting
-**IMPORTANT**: Generate all content in English, not Japanese.
-
 ## Context Validation
 
 ### Previous Phases Check

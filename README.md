@@ -107,7 +107,7 @@ your-project/
 - `/kiro:spec-validate [feature]` - Validate task references
 
 ### TDD Commands
-- `/kiro:implement-green [feature]` - Implement to pass tests
+- `/kiro:impl-green [feature]` - Implement to pass tests
 - `/kiro:refactor [feature]` - Refactor while keeping tests green
 
 ## Key Features
