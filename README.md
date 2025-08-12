@@ -159,12 +159,6 @@ With Kiro-SDD:
 - Interface defines: `userId: string // maps to user_id`
 - Implementation references these specifications
 
-## Documentation
-
-- [Getting Started Guide](docs/getting-started.md)
-- [Methodology Overview](docs/methodology.md)
-- [Example: Health Check](.kiro/specs/health-check/)
-
 ## Philosophy
 
 Kiro-SDD follows these principles:
